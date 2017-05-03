@@ -29,7 +29,7 @@ public final class RunGame extends JFrame
 		
 		final JTable table = new JTable()
 		{
-			private static final long serialVersionUID = 1L;
+			private static final long serialVersionUID = -4831407940640078121L;
 			
 			@Override
 			public boolean isCellEditable(final int r, final int c)

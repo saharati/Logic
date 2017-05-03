@@ -89,6 +89,8 @@ public final class RunWindow extends JFrame implements ActionListener
 		}
 		
 		setVisible(false);
+		
+		// TODO rounds.
 		new RunGame(getMode(), getStarter());
 	}
 	
