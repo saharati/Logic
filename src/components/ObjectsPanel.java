@@ -19,9 +19,12 @@ public final class ObjectsPanel extends JPanel
 {
 	private static final long serialVersionUID = -3000147490780419817L;
 	
+	public static final int ELEMENTS_PER_ROW = 5;
+	public static final int ELEMENTS_PER_COL = 5;
+	public static final int FONT_DIVISION = 26;
+	
 	private final List<LogicObject> _objects = new ArrayList<>();
 	private final Point _currentObject = new Point();
-	private final boolean[] _takenLetters = new boolean[26];
 	
 	private ObjectsPanel()
 	{
@@ -36,26 +39,15 @@ public final class ObjectsPanel extends JPanel
 		return _objects;
 	}
 	
-	public void addObject(final int xPercent, final int yPercent)
+	public void addObject(final LogicObject object)
 	{
-		char letter = '\0';
-		for (int i = 0;i < _takenLetters.length;i++)
-		{
-			if (!_takenLetters[i])
-			{
-				letter = (char) ('A' + i);
-				
-				_takenLetters[i] = true;
-				break;
-			}
-		}
+		_objects.add(object);
 		
-		_objects.add(new LogicObject(letter, xPercent, yPercent));
+		repaint();
 	}
 	
 	public void removeObject(final LogicObject object)
 	{
-		_takenLetters[object.getLetter() - 'A'] = false;
 		_objects.remove(object);
 		
 		for (final LogicObject obj : _objects)
@@ -68,13 +60,13 @@ public final class ObjectsPanel extends JPanel
 		return _currentObject;
 	}
 	
-	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, int radius)
+	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, int length)
 	{
 		final Graphics2D g2d = (Graphics2D) g.create();
-		final double dx = x2 - x1;
-		final double dy = y2 - y1;
+		final int dx = x2 - x1;
+		final int dy = y2 - y1;
 		final double angle = Math.atan2(dy, dx);
-		final int len = (int) (Math.sqrt(dx * dx + dy * dy) - radius);
+		final int len = (int) (Math.sqrt(dx * dx + dy * dy) - length);
 		
 		final AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
 		at.concatenate(AffineTransform.getRotateInstance(angle));
@@ -91,8 +83,9 @@ public final class ObjectsPanel extends JPanel
 		
 		final int windowWidth = getRootPane().getWidth();
 		final int windowHeight = getRootPane().getHeight();
-		final int diameter = Math.min(windowWidth, windowHeight) / 7;
-		final Font font = new Font("Arial", Font.BOLD, windowWidth / 30);
+		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
+		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
+		final Font font = new Font("Arial", Font.BOLD, Math.min(windowWidth, windowHeight) / FONT_DIVISION);
 		final FontMetrics metrics = g.getFontMetrics(font);
 		
 		g.setFont(font);
@@ -101,51 +94,62 @@ public final class ObjectsPanel extends JPanel
 		{
 			final int startX = object.getX(windowWidth);
 			final int startY = object.getY(windowHeight);
-			final int centerX = startX + (diameter / 2);
-			final int centerY = startY + (diameter / 2);
+			final int centerX = startX + (objectWidth / 2);
+			final int centerY = startY + (objectHeight / 2);
 			
 			g.setColor(Color.GRAY);
 			for (final LogicObject target : object.getAttackList())
 			{
 				if (object == target)
 				{
-					final int newStartX = startX - (diameter / 2);
-					final int newStartY = startY + (diameter / 2);
+					final int newStartX = startX - (objectWidth / 2);
+					final int newStartY = startY + (objectHeight / 2);
 					
-					g.drawOval(newStartX, newStartY, diameter, diameter / 3);
-					drawArrow(g, centerX, centerY, centerX, centerY, diameter / 2);
+					g.drawOval(newStartX, newStartY, objectWidth, objectHeight / 3);
+					drawArrow(g, centerX, centerY, centerX, centerY, objectWidth / 2);
 				}
 				else
 				{
-					final int targetX = target.getX(windowWidth) + (diameter / 2);
-					final int targetY = target.getY(windowHeight) + (diameter / 2);
-					drawArrow(g, centerX, centerY, targetX, targetY, diameter / 2);
+					final int targetX = target.getX(windowWidth) + (objectWidth / 2);
+					final int targetY = target.getY(windowHeight) + (objectHeight / 2);
+					
+					drawArrow(g, centerX, centerY, targetX, targetY, 0);
 				}
 			}
 			
 			g.setColor(Color.GREEN.darker());
-			g.fillOval(startX, startY, diameter, diameter);
+			g.fillRect(startX, startY, objectWidth, objectHeight);
 			
-			final String letter = String.valueOf(object.getLetter());
+			final String name = object.getName();
 			final String health = String.valueOf(object.getHealth());
 			final String damage = String.valueOf(object.getDamage());
-			final int textStartY = startY + metrics.getAscent() + (diameter - metrics.getHeight()) / 2;
-			int textStartX = startX + (diameter - metrics.stringWidth(letter + health + damage)) / 2;
-			
-			g.setColor(Color.BLUE);
-			g.drawString(health, textStartX, textStartY);
-			textStartX += metrics.stringWidth(health);
+			final int textStartX = startX + 10;
+			int textStartY = startY + metrics.getHeight();
 			
 			g.setColor(Color.WHITE);
-			g.drawString(letter, textStartX, textStartY);
-			textStartX += metrics.stringWidth(letter);
+			g.drawString("Name: " + name, textStartX, textStartY);
+			textStartY += metrics.getHeight();
 			
 			g.setColor(Color.RED);
-			g.drawString(damage, textStartX, textStartY);
+			g.drawString("Attack: " + damage, textStartX, textStartY);
+			textStartY += metrics.getHeight();
+			
+			if (!health.equals("0"))
+			{
+				g.setColor(Color.BLUE);
+				g.drawString("Life: " + health, textStartX, textStartY);
+			}
 		}
 		
 		g.setColor(Color.GREEN.darker());
-		g.fillOval(_currentObject.x, _currentObject.y, diameter, diameter);
+		if (SettingsWindow.getInstance().isVisible())
+		{
+			final LogicObject object = SettingsWindow.getInstance().getObject();
+			if (!_objects.contains(object))
+				g.fillRect(object.getX(windowWidth), object.getY(windowHeight), objectWidth, objectHeight);
+		}
+		else
+			g.fillRect(_currentObject.x, _currentObject.y, objectWidth, objectHeight);
 	}
 	
 	public static ObjectsPanel getInstance()
