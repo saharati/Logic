@@ -1,4 +1,4 @@
-body {font-family:Arial;background-image:url(/pptx.jpg);background-attachment:fixed;background-size:cover;color:black}
+body {font-family:Arial;background-image:url(../images/pptx.jpg);background-attachment:fixed;background-size:cover;color:black}
 main {width:100%;max-width:1200px;margin:20px auto}
 section {border:5px solid #404040;padding:10px}
 section div {background-color:#404040;padding:10px}

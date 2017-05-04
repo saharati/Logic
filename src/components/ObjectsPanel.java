@@ -124,7 +124,7 @@ public final class ObjectsPanel extends JPanel
 			}
 			
 			g.setColor(Color.GREEN.darker());
-			g.fillOval(startX, startY, diameter, diameter / 2);
+			g.fillOval(startX, startY, diameter, diameter);
 			
 			final String letter = String.valueOf(object.getLetter());
 			final String health = String.valueOf(object.getHealth());
