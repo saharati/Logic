@@ -62,9 +62,42 @@ public final class ObjectsPanel extends JPanel
 	
 	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, int length)
 	{
+		final int windowWidth = getRootPane().getWidth();
+		final int windowHeight = getRootPane().getHeight();
+		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
+		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
+		
+		int dx, dy;
 		final Graphics2D g2d = (Graphics2D) g.create();
-		final int dx = x2 - x1;
-		final int dy = y2 - y1;
+		if(x1 < x2){
+			if(Math.abs(x1 - x2)> windowHeight/3){
+				dx = x2 - x1 -objectWidth/2 - 5;
+				dy = y2 - y1;
+			}else{
+				if(y1 < y2){
+					dx = x2 - x1;
+					dy = y2 - y1 - objectHeight/2 - 5;
+				}else{
+					dx = x2 - x1;
+					dy = y2 - y1 + objectHeight/2 + 5;
+				}
+				
+			}
+		}else{
+			if(Math.abs(x1 - x2)> windowHeight/3){
+				dx = x2 - x1 +objectWidth/2 + 5;
+				dy = y2 - y1;
+			}else{
+				if(y1 < y2){
+					dx = x2 - x1;
+					dy = y2 - y1 - objectHeight/2 - 5;
+				}else{
+					dx = x2 - x1;
+					dy = y2 - y1 + objectHeight/2 + 5;
+				}
+			}
+		}
+	
 		final double angle = Math.atan2(dy, dx);
 		final int len = (int) (Math.sqrt(dx * dx + dy * dy) - length);
 		
