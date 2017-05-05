@@ -14,6 +14,7 @@ public final class LogicObject
 	private int _life;
 	private int _attack;
 	private int _lifeAfterAttack;
+	private boolean _isAttackingNow;
 	
 	public LogicObject(final int xPercent, final int yPercent)
 	{
@@ -80,5 +81,15 @@ public final class LogicObject
 	public void setLifeAfterAttack(final int lifeAfterAttack)
 	{
 		_lifeAfterAttack = lifeAfterAttack;
+	}
+	
+	public boolean isAttackingNow()
+	{
+		return _isAttackingNow;
+	}
+	
+	public void setIsAttackingNow(final boolean isAttackingNow)
+	{
+		_isAttackingNow = isAttackingNow;
 	}
 }

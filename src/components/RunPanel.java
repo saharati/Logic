@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import objects.LogicObject;
 
@@ -22,6 +23,8 @@ public final class RunPanel extends JPanel implements ActionListener
 	private static final int M = 1;
 	
 	private final JTextArea _chat = new JTextArea();
+	private final JButton _button = new JButton("Run");
+	private final Set<LogicObject> _targets = ConcurrentHashMap.newKeySet();
 	
 	private RunPanel()
 	{
@@ -35,10 +38,9 @@ public final class RunPanel extends JPanel implements ActionListener
 		_chat.setEditable(false);
 		add(chat, BorderLayout.CENTER);
 		
-		final JButton run = new JButton("Run");
-		run.setFont(chatFont);
-		run.addActionListener(this);
-		add(run, BorderLayout.SOUTH);
+		_button.setFont(chatFont);
+		_button.addActionListener(this);
+		add(_button, BorderLayout.SOUTH);
 		
 		addText("Variables:");
 		addText("S - The participants in the case.");
@@ -47,6 +49,8 @@ public final class RunPanel extends JPanel implements ActionListener
 		addText("K - The attack power of a participant.");
 		addText("βm - A bonus of 1 attack power when there are more than m accusers, we assign m = " + M + ".");
 		addText("-=====-");
+		
+		SwingUtilities.invokeLater(() -> repaint());
 	}
 	
 	public void addText(final String text)
@@ -71,17 +75,38 @@ public final class RunPanel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(final ActionEvent e)
 	{
-		addText("-=====-");
-		final Set<LogicObject> targets = ConcurrentHashMap.newKeySet();
 		for (final LogicObject object : ObjectsPanel.getInstance().getObjects())
-			if (object.getAttackedBy().isEmpty())
-				targets.addAll(object.getTargets());
-		while (!targets.isEmpty())
+			object.setIsAttackingNow(false);
+		
+		if (_button.getText().equals("Restart"))
 		{
-			for (final LogicObject target : targets)
+			addText("-=====-");
+			
+			for (final LogicObject object : ObjectsPanel.getInstance().getObjects())
+				object.setLifeAfterAttack(object.getLife());
+			
+			_button.setText("Run");
+		}
+		else
+		{
+			if (_button.getText().equals("Run"))
+			{
+				addText("-=====-");
+				
+				for (final LogicObject object : ObjectsPanel.getInstance().getObjects())
+					if (object.getAttackedBy().isEmpty())
+						_targets.addAll(object.getTargets());
+				
+				_button.setText("Next");
+			}
+			
+			for (final LogicObject target : _targets)
 			{
 				for (final LogicObject attacker : target.getAttackedBy())
+				{
+					attacker.setIsAttackingNow(true);
 					target.setLifeAfterAttack(Math.max(0, target.getLifeAfterAttack() - attacker.getAttack()));
+				}
 				if (target.getLifeAfterAttack() > 0 && target.getAttackedBy().size() > 1)
 					target.setLifeAfterAttack(Math.max(0, target.getLifeAfterAttack() - M));
 				
@@ -102,12 +127,15 @@ public final class RunPanel extends JPanel implements ActionListener
 				
 				addText(text);
 				
-				targets.remove(target);
+				_targets.remove(target);
 				if (target.getLifeAfterAttack() > 0 && target.getAttack() > 0 && !target.getTargets().isEmpty())
-					targets.addAll(target.getTargets());
+					_targets.addAll(target.getTargets());
 			}
+			if (_targets.isEmpty())
+				_button.setText("Restart");
 		}
-		addText("-=====-");
+		
+		ObjectsPanel.getInstance().repaint();
 	}
 	
 	public static RunPanel getInstance()

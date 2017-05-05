@@ -187,7 +187,10 @@ public final class ObjectsPanel extends JPanel
 			final int centerX = startX + (objectWidth / 2);
 			final int centerY = startY + (objectHeight / 2);
 			
-			g.setColor(Color.GRAY);
+			if (object.isAttackingNow())
+				g.setColor(Color.RED);
+			else
+				g.setColor(Color.GRAY);
 			for (final LogicObject target : object.getTargets())
 			{
 				if (object == target)
