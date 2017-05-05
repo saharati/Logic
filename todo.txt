@@ -1,3 +1,0 @@
-* Add a restart button.
-* Finish RunPanel.
-* Change RunPanel according to window size.

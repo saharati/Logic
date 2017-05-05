@@ -18,10 +18,10 @@ import objects.LogicObject;
 public final class ObjectsPanel extends JPanel
 {
 	private static final long serialVersionUID = -3000147490780419817L;
+	private static final int FONT_DIVISION = 26;
 	
 	public static final int ELEMENTS_PER_ROW = 5;
 	public static final int ELEMENTS_PER_COL = 5;
-	public static final int FONT_DIVISION = 26;
 	
 	private final List<LogicObject> _objects = new ArrayList<>();
 	private final Point _currentObject = new Point();
@@ -65,11 +65,17 @@ public final class ObjectsPanel extends JPanel
 	
 	public void removeObject(final LogicObject object)
 	{
+		RunPanel.getInstance().addText("Removing " + object.getName());
+		
 		_objects.remove(object);
 		
 		for (final LogicObject obj : _objects)
+		{
 			if (obj.getTargets().contains(object))
 				obj.getTargets().remove(object);
+			if (obj.getAttackedBy().contains(object))
+				obj.getAttackedBy().remove(object);
+		}
 	}
 	
 	public Point getCurrentObject()
