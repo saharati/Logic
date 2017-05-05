@@ -65,11 +65,17 @@ public final class ObjectsPanel extends JPanel
 	
 	public void removeObject(final LogicObject object)
 	{
+		RunPanel.getInstance().addText("Removing " + object.getName());
+		
 		_objects.remove(object);
 		
 		for (final LogicObject obj : _objects)
+		{
 			if (obj.getTargets().contains(object))
 				obj.getTargets().remove(object);
+			if (obj.getAttackedBy().contains(object))
+				obj.getAttackedBy().remove(object);
+		}
 	}
 	
 	public Point getCurrentObject()
