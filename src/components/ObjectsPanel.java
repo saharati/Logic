@@ -94,7 +94,7 @@ public final class ObjectsPanel extends JPanel
 		{
 			if (x1 < x2)
 			{
-				if (Math.abs(x1 - x2) > getHeight() / 3)
+				if (Math.abs(x1 - x2) > objectWidth / 2 + 20 && Math.abs(y1 - y2) < 7 * objectHeight / 4 )
 				{
 					dx = x2 - x1 - objectWidth / 2 - 5;
 					dy = y2 - y1;
@@ -115,7 +115,7 @@ public final class ObjectsPanel extends JPanel
 			}
 			else
 			{
-				if (Math.abs(x1 - x2) > getHeight() / 3)
+				if (Math.abs(x1 - x2) > objectWidth / 2 + 20 && Math.abs(y1 - y2) < 7 * objectHeight / 4 )
 				{
 					dx = x2 - x1 + objectWidth / 2 + 5;
 					dy = y2 - y1;
