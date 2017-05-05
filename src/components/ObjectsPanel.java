@@ -41,6 +41,23 @@ public final class ObjectsPanel extends JPanel
 	
 	public void addObject(final LogicObject object)
 	{
+		String text = "Adding " + object.getName();
+		if (object.getLife() > 0 && object.getAttack() > 0)
+			text += " with life = " + object.getLife() + " and attack = " + object.getAttack();
+		else if (object.getLife() > 0)
+			text += " with life = " + object.getLife();
+		else if (object.getAttack() > 0)
+			text += " with attack = " + object.getAttack();
+		if (!object.getTargets().isEmpty())
+		{
+			text += " targets: ";
+			for (final LogicObject target : object.getTargets())
+				text += target.getName() + ", ";
+			text = text.substring(0, text.length() - 2);
+		}
+		
+		RunPanel.getInstance().addText(text);
+		
 		_objects.add(object);
 		
 		repaint();

@@ -1,17 +1,19 @@
 package objects;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class LogicObject
 {
 	private final int _xPercent;
 	private final int _yPercent;
-	private final List<LogicObject> _targets = new ArrayList<>();
+	private final Set<LogicObject> _targets = new HashSet<>();
+	private final Set<LogicObject> _attackedBy = new HashSet<>();
 	
 	private String _name;
 	private int _life;
 	private int _attack;
+	private int _lifeAfterAttack;
 	
 	public LogicObject(final int xPercent, final int yPercent)
 	{
@@ -29,9 +31,14 @@ public final class LogicObject
 		return (int) ((_yPercent / 100d) * wholeY);
 	}
 	
-	public List<LogicObject> getTargets()
+	public Set<LogicObject> getTargets()
 	{
 		return _targets;
+	}
+	
+	public Set<LogicObject> getAttackedBy()
+	{
+		return _attackedBy;
 	}
 	
 	public String getName()
@@ -52,6 +59,7 @@ public final class LogicObject
 	public void setLife(final int life)
 	{
 		_life = life;
+		_lifeAfterAttack = life;
 	}
 	
 	public int getAttack()
@@ -62,5 +70,15 @@ public final class LogicObject
 	public void setAttack(final int attack)
 	{
 		_attack = attack;
+	}
+	
+	public int getLifeAfterAttack()
+	{
+		return _lifeAfterAttack;
+	}
+	
+	public void setLifeAfterAttack(final int lifeAfterAttack)
+	{
+		_lifeAfterAttack = lifeAfterAttack;
 	}
 }

@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -195,7 +197,11 @@ public final class SettingsWindow extends JFrame implements ActionListener
 			return;
 		}
 		
-		_object.getTargets().clear();
+		final boolean nameModified = !name.equals(_object.getName());
+		final boolean lifeModified = life != _object.getLife();
+		final boolean attackModified = attack != _object.getAttack();
+		
+		final Set<LogicObject> targets = new HashSet<>();
 		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
 		for (final int index : _targets.getSelectedIndices())
 		{
@@ -204,19 +210,75 @@ public final class SettingsWindow extends JFrame implements ActionListener
 			{
 				if (object.getName().equals(selectedName))
 				{
-					_object.getTargets().add(object);
+					targets.add(object);
 					break;
 				}
 			}
 		}
-		_object.setName(name);
-		_object.setLife(life);
-		_object.setAttack(attack);
+		
+		boolean targetsModified = _object.getTargets().size() != targets.size();
+		if (!targetsModified)
+		{
+			for (final LogicObject target : targets)
+			{
+				if (!_object.getTargets().contains(target))
+				{
+					targetsModified = true;
+					break;
+				}
+			}
+			if (!targetsModified)
+			{
+				for (final LogicObject target : _object.getTargets())
+				{
+					if (!targets.contains(target))
+					{
+						targetsModified = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		String text = "Modified " + _object.getName();
+		if (nameModified)
+		{
+			text += " name to " + name;
+			_object.setName(name);
+		}
+		if (lifeModified)
+		{
+			text += " life to " + life;
+			_object.setLife(life);
+		}
+		if (attackModified)
+		{
+			text += " attack to " + attack;
+			_object.setAttack(attack);
+		}
+		if (targetsModified)
+		{
+			text += " targets to: ";
+			for (final LogicObject obj : targets)
+				text += obj.getName() + ", ";
+			text = text.substring(0, text.length() - 2);
+			
+			_object.getTargets().forEach(target -> target.getAttackedBy().remove(_object));
+			_object.getTargets().clear();
+			_object.getTargets().addAll(targets);
+			
+			targets.forEach(target -> target.getAttackedBy().add(_object));
+		}
 		
 		SettingsWindow.getInstance().setVisible(false);
 		
 		if (ObjectsPanel.getInstance().getObjects().contains(_object))
+		{
+			if (nameModified || lifeModified || attackModified || targetsModified)
+				RunPanel.getInstance().addText(text);
+			
 			ObjectsPanel.getInstance().repaint();
+		}
 		else
 			ObjectsPanel.getInstance().addObject(_object);
 	}
