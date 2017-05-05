@@ -36,6 +36,7 @@ public final class RunPanel extends JPanel implements ActionListener
 		add(chat, BorderLayout.CENTER);
 		
 		final JButton run = new JButton("Run");
+		run.setFont(chatFont);
 		run.addActionListener(this);
 		add(run, BorderLayout.SOUTH);
 		
@@ -53,12 +54,18 @@ public final class RunPanel extends JPanel implements ActionListener
 		_chat.setText(_chat.getText() + text + "\r\n");
 	}
 	
+	public void recalculateSize(final int width)
+	{
+		setPreferredSize(new Dimension((int) ((width / 100d) * 25), getRootPane().getHeight()));
+		repaint();
+	}
+	
 	@Override
 	protected void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
 		
-		setPreferredSize(new Dimension((int) ((getRootPane().getWidth() / 100d) * 30), getRootPane().getHeight()));
+		setPreferredSize(new Dimension((int) ((getRootPane().getWidth() / 100d) * 25), getRootPane().getHeight()));
 	}
 	
 	@Override

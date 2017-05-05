@@ -18,6 +18,7 @@ public final class Main
 		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.add(ObjectsPanel.getInstance(), BorderLayout.CENTER);
 		window.add(RunPanel.getInstance(), BorderLayout.EAST);
+		window.addWindowStateListener(e -> RunPanel.getInstance().recalculateSize(window.getWidth()));
 		window.setVisible(true);
 	}
 }

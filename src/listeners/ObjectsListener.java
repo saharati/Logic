@@ -2,16 +2,15 @@ package listeners;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
+
+import javax.swing.JOptionPane;
 
 import components.ObjectsPanel;
 import components.SettingsWindow;
-import components.Point;
 import objects.LogicObject;
 
 public final class ObjectsListener extends MouseAdapter
 {
-	private LinkedList<Point> points = new LinkedList<Point>();
 	@Override
 	public void mousePressed(final MouseEvent e)
 	{
@@ -19,10 +18,8 @@ public final class ObjectsListener extends MouseAdapter
 		final int windowHeight = ObjectsPanel.getInstance().getHeight();
 		final int objectWidth = windowWidth / ObjectsPanel.ELEMENTS_PER_ROW;
 		final int objectHeight = windowHeight / ObjectsPanel.ELEMENTS_PER_COL;
-		
 		final int clickedX = e.getX();
 		final int clickedY = e.getY();
-		
 		for (final LogicObject object : ObjectsPanel.getInstance().getObjects())
 		{
 			final int startX = object.getX(windowWidth);
@@ -31,31 +28,27 @@ public final class ObjectsListener extends MouseAdapter
 			final int endY = startY + objectHeight;
 			if (clickedX > startX && clickedX < endX && clickedY > startY && clickedY < endY)
 			{
-				
 				if (e.isControlDown())
 				{
 					ObjectsPanel.getInstance().removeObject(object);
 					ObjectsPanel.getInstance().repaint();
 				}
-				else{
+				else
 					SettingsWindow.getInstance().edit(object);
-				}
 				
 				return;
 			}
 		}
-		points.add(new Point(e.getX(), e.getY()));
-		for(int i=0; i < points.size() - 1; i++){//make no option for too much close rectangles
-			if(Math.abs(clickedX - points.get(i).getX()) < 1.3 * objectWidth && Math.abs(clickedY - points.get(i).getY()) < 1.3 * objectHeight){
-				points.removeLast();
-				return;
-			}
+		if (!ObjectsPanel.getInstance().canPlaceObjectAt(clickedX, clickedY))
+		{
+			JOptionPane.showMessageDialog(null, "Cannot add object because it is too close to other object.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
 		final int xPercent = (int) (((double) clickedX / windowWidth) * 100);
 		final int yPercent = (int) (((double) clickedY / windowHeight) * 100);
 		final LogicObject object = new LogicObject(xPercent, yPercent);
-		SettingsWindow.getInstance().create(object);//make new circle
+		SettingsWindow.getInstance().create(object);
 	}
 	
 	@Override

@@ -39,6 +39,19 @@ public final class ObjectsPanel extends JPanel
 		return _objects;
 	}
 	
+	public boolean canPlaceObjectAt(final int clickedX, final int clickedY)
+	{
+		final int windowWidth = getWidth();
+		final int windowHeight = getHeight();
+		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
+		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
+		for (final LogicObject object : _objects)
+			if (Math.abs(clickedX - object.getX(windowWidth)) < 1.3 * objectWidth && Math.abs(clickedY - object.getY(windowHeight)) < 1.3 * objectHeight)
+				return false;
+		
+		return true;
+	}
+	
 	public void addObject(final LogicObject object)
 	{
 		String text = "Adding " + object.getName();
