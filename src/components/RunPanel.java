@@ -116,11 +116,11 @@ public final class RunPanel extends JPanel implements ActionListener
 				
 				String text = target.getName() + " is being attacked by: ";
 				for (final LogicObject attacker : target.getAttackedBy())
-					text += attacker.getName() + " (" + attacker.getAttack() + ")";
+					text += attacker.getName() + " (" + attacker.getAttack() + "), ";
 				if (target.getAttackedBy().size() > 1)
-					text += ", there's more than 1 attacker and therefore βm = " + M + ".";
+					text += "there's more than 1 attacker and therefore βm = " + M + ".";
 				else
-					text += ", there's only 1 attacker and therefore βm = 0.";
+					text += "there's only 1 attacker and therefore βm = 0.";
 				text += "\r\nFinal calculation: " + target.getName() + " life => " + target.getLife() + " - [";
 				for (final LogicObject attacker : target.getAttackedBy())
 					text += attacker.getAttack() + " + ";
