@@ -26,9 +26,9 @@ public final class SettingsWindow extends JFrame implements ActionListener
 	private static final long serialVersionUID = 5828369184907352027L;
 	
 	private final JTextField _name = new JTextField(15);
-	private final JTextField _health = new JTextField(15);
-	private final JTextField _damage = new JTextField(15);
-	private final JList<String> _attackList = new JList<>();
+	private final JTextField _life = new JTextField(15);
+	private final JTextField _attack = new JTextField(15);
+	private final JList<String> _targets = new JList<>();
 	private final JButton _submit = new JButton("OK");
 	
 	private LogicObject _object;
@@ -40,8 +40,8 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		
 		final Font font = new Font("Arial", Font.BOLD, 15);
 		
-		_attackList.setModel(new DefaultListModel<>());
-		_attackList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		_targets.setModel(new DefaultListModel<>());
+		_targets.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
 		final JLabel name = new JLabel("Name: ", SwingConstants.LEFT);
 		name.setFont(font);
@@ -50,26 +50,26 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		_name.setFont(font);
 		add(_name);
 		
-		final JLabel health = new JLabel("Health: ", SwingConstants.LEFT);
-		health.setFont(font);
-		health.setLabelFor(_health);
-		add(health);
-		_health.setFont(font);
-		add(_health);
-		
-		final JLabel damage = new JLabel("Damage: ", SwingConstants.LEFT);
-		damage.setFont(font);
-		damage.setLabelFor(_damage);
-		add(damage);
-		_damage.setFont(font);
-		add(_damage);
+		final JLabel life = new JLabel("Life: ", SwingConstants.LEFT);
+		life.setFont(font);
+		life.setLabelFor(_life);
+		add(life);
+		_life.setFont(font);
+		add(_life);
 		
 		final JLabel attack = new JLabel("Attack: ", SwingConstants.LEFT);
 		attack.setFont(font);
-		attack.setLabelFor(_attackList);
+		attack.setLabelFor(_attack);
 		add(attack);
-		_attackList.setFont(font);
-		add(_attackList);
+		_attack.setFont(font);
+		add(_attack);
+		
+		final JLabel targets = new JLabel("Targets: ", SwingConstants.LEFT);
+		targets.setFont(font);
+		targets.setLabelFor(_targets);
+		add(targets);
+		_targets.setFont(font);
+		add(_targets);
 		
 		final JButton cancel = new JButton("Cancel");
 		cancel.setFont(font);
@@ -99,15 +99,15 @@ public final class SettingsWindow extends JFrame implements ActionListener
 	
 	public void create(final LogicObject object)
 	{
-		final DefaultListModel<String> model = (DefaultListModel<String>) _attackList.getModel();
+		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
 		model.removeAllElements();
 		for (final LogicObject obj : ObjectsPanel.getInstance().getObjects())
 			model.addElement(obj.getName());
 		
 		_object = object;
 		_name.setText("");
-		_health.setText("");
-		_damage.setText("");
+		_life.setText("");
+		_attack.setText("");
 		
 		setSize(getWidth(), _initialHeight + model.getSize() * 20);
 		setVisible(true);
@@ -115,19 +115,19 @@ public final class SettingsWindow extends JFrame implements ActionListener
 	
 	public void edit(final LogicObject object)
 	{
-		final DefaultListModel<String> model = (DefaultListModel<String>) _attackList.getModel();
+		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
 		model.removeAllElements();
 		for (final LogicObject obj : ObjectsPanel.getInstance().getObjects())
 			model.addElement(obj.getName());
 		final List<Integer> items = new ArrayList<>();
-		for (final LogicObject obj : object.getAttackList())
+		for (final LogicObject obj : object.getTargets())
 			items.add(model.indexOf(obj.getName()));
 		
 		_object = object;
-		_attackList.setSelectedIndices(items.stream().mapToInt(i -> i).toArray());
+		_targets.setSelectedIndices(items.stream().mapToInt(i -> i).toArray());
 		_name.setText(object.getName());
-		_health.setText(object.getHealth() == 0 ? "" : String.valueOf(object.getHealth()));
-		_damage.setText(object.getDamage() == 0 ? "" : String.valueOf(object.getDamage()));
+		_life.setText(object.getLife() == 0 ? "" : String.valueOf(object.getLife()));
+		_attack.setText(object.getAttack() == 0 ? "" : String.valueOf(object.getAttack()));
 		
 		setSize(getWidth(), _initialHeight + model.getSize() * 20);
 		setVisible(true);
@@ -154,35 +154,40 @@ public final class SettingsWindow extends JFrame implements ActionListener
 			}
 		}
 		
-		int health;
-		int damage;
+		int life;
+		int attack;
 		try
 		{
-			if (_health.getText().isEmpty())
-				health = 0;
+			if (_life.getText().isEmpty())
+				life = 0;
 			else
 			{
-				health = Integer.parseInt(_health.getText());
-				if (health < 1)
+				life = Integer.parseInt(_life.getText());
+				if (life < 1)
 	 			{
-	 				JOptionPane.showMessageDialog(null, "Health must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+	 				JOptionPane.showMessageDialog(null, "Life must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
 	 				return;
 	 			}
 			}
 		}
 		catch (final Exception t)
 		{
-			JOptionPane.showMessageDialog(null, "Health must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Life must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try
 		{
-			damage = Integer.valueOf(_damage.getText());
-			if (damage < 1)
- 			{
- 				JOptionPane.showMessageDialog(null, "Attack must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
- 				return;
- 			}
+			if (_attack.getText().isEmpty())
+				attack = 0;
+			else
+			{
+				attack = Integer.valueOf(_attack.getText());
+				if (attack < 1)
+	 			{
+	 				JOptionPane.showMessageDialog(null, "Attack must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+	 				return;
+	 			}
+			}
 		}
 		catch (final Exception t)
 		{
@@ -190,23 +195,23 @@ public final class SettingsWindow extends JFrame implements ActionListener
 			return;
 		}
 		
-		_object.getAttackList().clear();
-		final DefaultListModel<String> model = (DefaultListModel<String>) _attackList.getModel();
-		for (final int index : _attackList.getSelectedIndices())
+		_object.getTargets().clear();
+		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
+		for (final int index : _targets.getSelectedIndices())
 		{
 			final String selectedName = model.getElementAt(index);
 			for (final LogicObject object : ObjectsPanel.getInstance().getObjects())
 			{
 				if (object.getName().equals(selectedName))
 				{
-					_object.getAttackList().add(object);
+					_object.getTargets().add(object);
 					break;
 				}
 			}
 		}
 		_object.setName(name);
-		_object.setHealth(health);
-		_object.setDamage(damage);
+		_object.setLife(life);
+		_object.setAttack(attack);
 		
 		SettingsWindow.getInstance().setVisible(false);
 		

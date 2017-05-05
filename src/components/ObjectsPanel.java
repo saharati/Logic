@@ -51,8 +51,8 @@ public final class ObjectsPanel extends JPanel
 		_objects.remove(object);
 		
 		for (final LogicObject obj : _objects)
-			if (obj.getAttackList().contains(object))
-				obj.getAttackList().remove(object);
+			if (obj.getTargets().contains(object))
+				obj.getTargets().remove(object);
 	}
 	
 	public Point getCurrentObject()
@@ -60,47 +60,68 @@ public final class ObjectsPanel extends JPanel
 		return _currentObject;
 	}
 	
-	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, int length)
+	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, boolean self)
 	{
-		final int windowWidth = getRootPane().getWidth();
-		final int windowHeight = getRootPane().getHeight();
-		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
-		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
-		
-		int dx, dy;
 		final Graphics2D g2d = (Graphics2D) g.create();
-		if(x1 < x2){
-			if(Math.abs(x1 - x2)> windowHeight/3){
-				dx = x2 - x1 -objectWidth/2 - 5;
-				dy = y2 - y1;
-			}else{
-				if(y1 < y2){
-					dx = x2 - x1;
-					dy = y2 - y1 - objectHeight/2 - 5;
-				}else{
-					dx = x2 - x1;
-					dy = y2 - y1 + objectHeight/2 + 5;
-				}
-				
-			}
-		}else{
-			if(Math.abs(x1 - x2)> windowHeight/3){
-				dx = x2 - x1 +objectWidth/2 + 5;
-				dy = y2 - y1;
-			}else{
-				if(y1 < y2){
-					dx = x2 - x1;
-					dy = y2 - y1 - objectHeight/2 - 5;
-				}else{
-					dx = x2 - x1;
-					dy = y2 - y1 + objectHeight/2 + 5;
-				}
-			}
-		}
-	
-		final double angle = Math.atan2(dy, dx);
-		final int len = (int) (Math.sqrt(dx * dx + dy * dy) - length);
+		final int objectWidth = getWidth() / ELEMENTS_PER_ROW;
+		final int objectHeight = getHeight() / ELEMENTS_PER_COL;
 		
+		int dx, dy, len;
+		if (self)
+		{
+			dx = x2 - x1;
+			dy = y2 - y1;
+			len = (int) (Math.sqrt(dx * dx + dy * dy) - objectWidth / 2);
+		}
+		else
+		{
+			if (x1 < x2)
+			{
+				if (Math.abs(x1 - x2) > getHeight() / 3)
+				{
+					dx = x2 - x1 - objectWidth / 2 - 5;
+					dy = y2 - y1;
+				}
+				else
+				{
+					if (y1 < y2)
+					{
+						dx = x2 - x1;
+						dy = y2 - y1 - objectHeight / 2 - 5;
+					}
+					else
+					{
+						dx = x2 - x1;
+						dy = y2 - y1 + objectHeight / 2 + 5;
+					}
+				}
+			}
+			else
+			{
+				if (Math.abs(x1 - x2) > getHeight() / 3)
+				{
+					dx = x2 - x1 + objectWidth / 2 + 5;
+					dy = y2 - y1;
+				}
+				else
+				{
+					if (y1 < y2)
+					{
+						dx = x2 - x1;
+						dy = y2 - y1 - objectHeight / 2 - 5;
+					}
+					else
+					{
+						dx = x2 - x1;
+						dy = y2 - y1 + objectHeight / 2 + 5;
+					}
+				}
+			}
+			
+			len = (int) Math.sqrt(dx * dx + dy * dy);
+		}
+		
+		final double angle = Math.atan2(dy, dx);
 		final AffineTransform at = AffineTransform.getTranslateInstance(x1, y1);
 		at.concatenate(AffineTransform.getRotateInstance(angle));
 		
@@ -114,8 +135,8 @@ public final class ObjectsPanel extends JPanel
 	{
 		super.paintComponent(g);
 		
-		final int windowWidth = getRootPane().getWidth();
-		final int windowHeight = getRootPane().getHeight();
+		final int windowWidth = getWidth();
+		final int windowHeight = getHeight();
 		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
 		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
 		final Font font = new Font("Arial", Font.BOLD, Math.min(windowWidth, windowHeight) / FONT_DIVISION);
@@ -131,7 +152,7 @@ public final class ObjectsPanel extends JPanel
 			final int centerY = startY + (objectHeight / 2);
 			
 			g.setColor(Color.GRAY);
-			for (final LogicObject target : object.getAttackList())
+			for (final LogicObject target : object.getTargets())
 			{
 				if (object == target)
 				{
@@ -139,38 +160,36 @@ public final class ObjectsPanel extends JPanel
 					final int newStartY = startY + (objectHeight / 2);
 					
 					g.drawOval(newStartX, newStartY, objectWidth, objectHeight / 3);
-					drawArrow(g, centerX, centerY, centerX, centerY, objectWidth / 2);
+					drawArrow(g, centerX, centerY, centerX, centerY, true);
 				}
 				else
 				{
 					final int targetX = target.getX(windowWidth) + (objectWidth / 2);
 					final int targetY = target.getY(windowHeight) + (objectHeight / 2);
 					
-					drawArrow(g, centerX, centerY, targetX, targetY, 0);
+					drawArrow(g, centerX, centerY, targetX, targetY, false);
 				}
 			}
 			
 			g.setColor(Color.GREEN.darker());
 			g.fillRect(startX, startY, objectWidth, objectHeight);
 			
-			final String name = object.getName();
-			final String health = String.valueOf(object.getHealth());
-			final String damage = String.valueOf(object.getDamage());
 			final int textStartX = startX + 10;
 			int textStartY = startY + metrics.getHeight();
 			
 			g.setColor(Color.WHITE);
-			g.drawString("Name: " + name, textStartX, textStartY);
+			g.drawString("Name: " + object.getName(), textStartX, textStartY);
 			textStartY += metrics.getHeight();
-			
-			g.setColor(Color.RED);
-			g.drawString("Attack: " + damage, textStartX, textStartY);
-			textStartY += metrics.getHeight();
-			
-			if (!health.equals("0"))
+			if (object.getLife() > 0)
 			{
 				g.setColor(Color.BLUE);
-				g.drawString("Life: " + health, textStartX, textStartY);
+				g.drawString("Life: " + object.getLife(), textStartX, textStartY);
+				textStartY += metrics.getHeight();
+			}
+			if (object.getAttack() > 0)
+			{
+				g.setColor(Color.RED);
+				g.drawString("Attack: " + object.getAttack(), textStartX, textStartY);
 			}
 		}
 		

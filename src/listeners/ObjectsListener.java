@@ -12,8 +12,8 @@ public final class ObjectsListener extends MouseAdapter
 	@Override
 	public void mousePressed(final MouseEvent e)
 	{
-		final int windowWidth = ObjectsPanel.getInstance().getRootPane().getWidth();
-		final int windowHeight = ObjectsPanel.getInstance().getRootPane().getHeight();
+		final int windowWidth = ObjectsPanel.getInstance().getWidth();
+		final int windowHeight = ObjectsPanel.getInstance().getHeight();
 		final int objectWidth = windowWidth / ObjectsPanel.ELEMENTS_PER_ROW;
 		final int objectHeight = windowHeight / ObjectsPanel.ELEMENTS_PER_COL;
 		final int clickedX = e.getX();

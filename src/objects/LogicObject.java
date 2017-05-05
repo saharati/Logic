@@ -7,11 +7,11 @@ public final class LogicObject
 {
 	private final int _xPercent;
 	private final int _yPercent;
-	private final List<LogicObject> _attackList = new ArrayList<>();
+	private final List<LogicObject> _targets = new ArrayList<>();
 	
 	private String _name;
-	private int _health;
-	private int _damage;
+	private int _life;
+	private int _attack;
 	
 	public LogicObject(final int xPercent, final int yPercent)
 	{
@@ -29,9 +29,9 @@ public final class LogicObject
 		return (int) ((_yPercent / 100d) * wholeY);
 	}
 	
-	public List<LogicObject> getAttackList()
+	public List<LogicObject> getTargets()
 	{
-		return _attackList;
+		return _targets;
 	}
 	
 	public String getName()
@@ -44,23 +44,23 @@ public final class LogicObject
 		_name = name;
 	}
 	
-	public int getHealth()
+	public int getLife()
 	{
-		return _health;
+		return _life;
 	}
 	
-	public void setHealth(final int health)
+	public void setLife(final int life)
 	{
-		_health = health;
+		_life = life;
 	}
 	
-	public int getDamage()
+	public int getAttack()
 	{
-		return _damage;
+		return _attack;
 	}
 	
-	public void setDamage(final int damage)
+	public void setAttack(final int attack)
 	{
-		_damage = damage;
+		_attack = attack;
 	}
 }

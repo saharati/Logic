@@ -1,0 +1,3 @@
+* Integrate NetSexOff and NodeSexOff into the program and delete the files.
+* Add a restart button.
+* Finish RunPanel.
