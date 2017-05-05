@@ -132,8 +132,15 @@ public final class RunPanel extends JPanel implements ActionListener
 				addText(text);
 				
 				_targets.remove(target);
-				if (target.getLifeAfterAttack() > 0 && target.getAttack() > 0 && !target.getTargets().isEmpty())
-					_targets.addAll(target.getTargets());
+				if (target.getAttack() > 0 && !target.getTargets().isEmpty())
+				{
+					if (target.getLifeAfterAttack() > 0)
+						_targets.addAll(target.getTargets());
+					else
+						for (final LogicObject obj : target.getTargets())
+							if (obj.getLifeAfterAttack() > 0 && obj.getAttack() > 0 && !obj.getTargets().isEmpty())
+								_targets.addAll(obj.getTargets());
+				}
 			}
 			if (_targets.isEmpty())
 				_button.setText("Restart");

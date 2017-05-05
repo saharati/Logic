@@ -6,7 +6,9 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -222,7 +224,16 @@ public final class ObjectsPanel extends JPanel
 			if (object.getLife() > 0)
 			{
 				g.setColor(Color.BLUE);
-				g.drawString("Life: " + object.getLife(), textStartX, textStartY);
+				if (object.getLife() != object.getLifeAfterAttack())
+				{
+					final AttributedString as = new AttributedString("Life: " + object.getLife() + " " + object.getLifeAfterAttack());
+					as.addAttribute(TextAttribute.FONT, font);
+					as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, 5, 7 + String.valueOf(object.getLife()).length());
+					
+					g.drawString(as.getIterator(), textStartX, textStartY);
+				}
+				else
+					g.drawString("Life: " + object.getLife(), textStartX, textStartY);
 				textStartY += metrics.getHeight();
 			}
 			if (object.getAttack() > 0)
