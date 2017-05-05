@@ -104,7 +104,8 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
 		model.removeAllElements();
 		for (final LogicObject obj : ObjectsPanel.getInstance().getObjects())
-			model.addElement(obj.getName());
+			if (obj.getLife() > 0)
+				model.addElement(obj.getName());
 		
 		_object = object;
 		_name.setText("");
@@ -120,7 +121,8 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		final DefaultListModel<String> model = (DefaultListModel<String>) _targets.getModel();
 		model.removeAllElements();
 		for (final LogicObject obj : ObjectsPanel.getInstance().getObjects())
-			model.addElement(obj.getName());
+			if (obj.getLife() > 0)
+				model.addElement(obj.getName());
 		final List<Integer> items = new ArrayList<>();
 		for (final LogicObject obj : object.getTargets())
 			items.add(model.indexOf(obj.getName()));
@@ -250,6 +252,10 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		{
 			text += " life to " + life;
 			_object.setLife(life);
+			
+			if (life == 0)
+				for (final LogicObject object : _object.getAttackedBy())
+					object.getTargets().remove(_object);
 		}
 		if (attackModified)
 		{
