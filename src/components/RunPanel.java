@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import objects.LogicObject;
 
@@ -49,13 +48,16 @@ public final class RunPanel extends JPanel implements ActionListener
 		addText("K - The attack power of a participant.");
 		addText("βm - A bonus of 1 attack power when there are more than m accusers, we assign m = " + M + ".");
 		addText("-=====-");
-		
-		SwingUtilities.invokeLater(() -> repaint());
 	}
 	
 	public void addText(final String text)
 	{
 		_chat.setText(_chat.getText() + text + "\r\n");
+	}
+	
+	public boolean isRunning()
+	{
+		return !_button.getText().equals("Run");
 	}
 	
 	public void recalculateSize(final int width)
@@ -98,6 +100,8 @@ public final class RunPanel extends JPanel implements ActionListener
 						_targets.addAll(object.getTargets());
 				
 				_button.setText("Next");
+				
+				ObjectsPanel.getInstance().getCurrentObject().setLocation(9999, 9999);
 			}
 			
 			for (final LogicObject target : _targets)

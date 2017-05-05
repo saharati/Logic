@@ -20,5 +20,7 @@ public final class Main
 		window.add(RunPanel.getInstance(), BorderLayout.EAST);
 		window.addWindowStateListener(e -> RunPanel.getInstance().recalculateSize(window.getWidth()));
 		window.setVisible(true);
+		
+		RunPanel.getInstance().recalculateSize(window.getWidth());
 	}
 }

@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 import components.ObjectsPanel;
+import components.RunPanel;
 import components.SettingsWindow;
 import objects.LogicObject;
 
@@ -14,6 +15,12 @@ public final class ObjectsListener extends MouseAdapter
 	@Override
 	public void mousePressed(final MouseEvent e)
 	{
+		if (RunPanel.getInstance().isRunning())
+		{
+			JOptionPane.showMessageDialog(null, "Cannot make any modification while game is running.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		final int windowWidth = ObjectsPanel.getInstance().getWidth();
 		final int windowHeight = ObjectsPanel.getInstance().getHeight();
 		final int objectWidth = windowWidth / ObjectsPanel.ELEMENTS_PER_ROW;
@@ -54,6 +61,9 @@ public final class ObjectsListener extends MouseAdapter
 	@Override
 	public void mouseMoved(final MouseEvent e)
 	{
+		if (RunPanel.getInstance().isRunning())
+			return;
+		
 		ObjectsPanel.getInstance().getCurrentObject().setLocation(e.getX(), e.getY());
 		ObjectsPanel.getInstance().repaint();
 	}
