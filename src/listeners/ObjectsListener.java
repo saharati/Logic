@@ -5,8 +5,8 @@ import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 
 import components.ObjectsPanel;
-import components.Point;
 import components.SettingsWindow;
+import components.Point;
 import objects.LogicObject;
 
 public final class ObjectsListener extends MouseAdapter
