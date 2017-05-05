@@ -18,10 +18,10 @@ import objects.LogicObject;
 public final class ObjectsPanel extends JPanel
 {
 	private static final long serialVersionUID = -3000147490780419817L;
+	private static final int FONT_DIVISION = 26;
 	
 	public static final int ELEMENTS_PER_ROW = 5;
 	public static final int ELEMENTS_PER_COL = 5;
-	public static final int FONT_DIVISION = 26;
 	
 	private final List<LogicObject> _objects = new ArrayList<>();
 	private final Point _currentObject = new Point();
