@@ -6,16 +6,15 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
-import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 
 import listeners.ObjectsListener;
-import objects.LogicObject;
+import objects.SexOffenderNode;
 
 public final class ObjectsPanel extends JPanel
 {
@@ -25,7 +24,7 @@ public final class ObjectsPanel extends JPanel
 	public static final int ELEMENTS_PER_ROW = 5;
 	public static final int ELEMENTS_PER_COL = 5;
 	
-	private final List<LogicObject> _objects = new ArrayList<>();
+	private final List<SexOffenderNode> _objects = new ArrayList<>();
 	private final Point _currentObject = new Point();
 	
 	private ObjectsPanel()
@@ -36,7 +35,7 @@ public final class ObjectsPanel extends JPanel
 		addMouseMotionListener(ol);
 	}
 	
-	public List<LogicObject> getObjects()
+	public List<SexOffenderNode> getObjects()
 	{
 		return _objects;
 	}
@@ -47,50 +46,20 @@ public final class ObjectsPanel extends JPanel
 		final int windowHeight = getHeight();
 		final int objectWidth = windowWidth / ELEMENTS_PER_ROW;
 		final int objectHeight = windowHeight / ELEMENTS_PER_COL;
-		for (final LogicObject object : _objects)
+		for (final SexOffenderNode object : _objects)
 			if (Math.abs(clickedX - object.getX(windowWidth)) < 1.3 * objectWidth && Math.abs(clickedY - object.getY(windowHeight)) < 1.3 * objectHeight)
 				return false;
 		
 		return true;
 	}
 	
-	public void addObject(final LogicObject object)
+	public void addObject(final SexOffenderNode object)
 	{
-		String text = "Adding " + object.getName();
-		if (object.getLife() > 0 && object.getAttack() > 0)
-			text += " with life = " + object.getLife() + " and attack = " + object.getAttack();
-		else if (object.getLife() > 0)
-			text += " with life = " + object.getLife();
-		else if (object.getAttack() > 0)
-			text += " with attack = " + object.getAttack();
-		if (!object.getTargets().isEmpty())
-		{
-			text += " targets: ";
-			for (final LogicObject target : object.getTargets())
-				text += target.getName() + ", ";
-			text = text.substring(0, text.length() - 2);
-		}
-		
-		RunPanel.getInstance().addText(text);
+		RunPanel.getInstance().addText(object.getName() + " has been added to the network with " + object.getLife() + " life.");
 		
 		_objects.add(object);
 		
 		repaint();
-	}
-	
-	public void removeObject(final LogicObject object)
-	{
-		RunPanel.getInstance().addText("Removing " + object.getName());
-		
-		_objects.remove(object);
-		
-		for (final LogicObject obj : _objects)
-		{
-			if (obj.getTargets().contains(object))
-				obj.getTargets().remove(object);
-			if (obj.getAttackedBy().contains(object))
-				obj.getAttackedBy().remove(object);
-		}
 	}
 	
 	public Point getCurrentObject()
@@ -98,7 +67,8 @@ public final class ObjectsPanel extends JPanel
 		return _currentObject;
 	}
 	
-	private void drawArrow(final Graphics g, int x1, int y1, int x2, int y2, boolean self)
+	// TODO near each arrow should draw the attack power.
+	private void drawArrow(final Graphics g, final int x1, final int y1, final int x2, final int y2, final boolean self, final int attack)
 	{
 		final Graphics2D g2d = (Graphics2D) g.create();
 		final int objectWidth = getWidth() / ELEMENTS_PER_ROW;
@@ -182,76 +152,59 @@ public final class ObjectsPanel extends JPanel
 		
 		g.setFont(font);
 		
-		for (final LogicObject object : _objects)
+		for (final SexOffenderNode object : _objects)
 		{
 			final int startX = object.getX(windowWidth);
 			final int startY = object.getY(windowHeight);
 			final int centerX = startX + (objectWidth / 2);
 			final int centerY = startY + (objectHeight / 2);
 			
-			if (object.isAttackingNow())
-				g.setColor(Color.RED);
-			else
-				g.setColor(Color.GRAY);
-			for (final LogicObject target : object.getTargets())
+			g.setColor(Color.GRAY);
+			for (final Entry<SexOffenderNode, Integer> entry : object.getTargets().entrySet())
 			{
+				final SexOffenderNode target = entry.getKey();
 				if (object == target)
 				{
 					final int newStartX = startX - (objectWidth / 2);
 					final int newStartY = startY + (objectHeight / 2);
 					
 					g.drawOval(newStartX, newStartY, objectWidth, objectHeight / 3);
-					drawArrow(g, centerX, centerY, centerX, centerY, true);
+					drawArrow(g, centerX, centerY, centerX, centerY, true, entry.getValue());
 				}
 				else
 				{
 					final int targetX = target.getX(windowWidth) + (objectWidth / 2);
 					final int targetY = target.getY(windowHeight) + (objectHeight / 2);
 					
-					drawArrow(g, centerX, centerY, targetX, targetY, false);
+					drawArrow(g, centerX, centerY, targetX, targetY, false, entry.getValue());
 				}
 			}
 			
 			g.setColor(Color.GREEN.darker());
 			g.fillRect(startX, startY, objectWidth, objectHeight);
 			
-			final int textStartX = startX + 10;
-			int textStartY = startY + metrics.getHeight();
+			final int textStartY = startY + metrics.getAscent() + (objectHeight - metrics.getHeight()) / 2;
+			int textStartX;
+			if (object.getLife() > 0)
+				textStartX = startX + (objectWidth - metrics.stringWidth(object.getName() + " (" + object.getLife() + ")")) / 2;
+			else
+				textStartX = startX + (objectWidth - metrics.stringWidth(object.getName())) / 2;
 			
 			g.setColor(Color.WHITE);
-			g.drawString("Name: " + object.getName(), textStartX, textStartY);
-			textStartY += metrics.getHeight();
+			g.drawString(object.getName() + " ", textStartX, textStartY);
+			textStartX += metrics.stringWidth(object.getName() + " ");
 			if (object.getLife() > 0)
 			{
 				g.setColor(Color.BLUE);
-				if (object.getLife() != object.getLifeAfterAttack())
-				{
-					final AttributedString as = new AttributedString("Life: " + object.getLife() + " " + object.getLifeAfterAttack());
-					as.addAttribute(TextAttribute.FONT, font);
-					as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, 5, 7 + String.valueOf(object.getLife()).length());
-					
-					g.drawString(as.getIterator(), textStartX, textStartY);
-				}
-				else
-					g.drawString("Life: " + object.getLife(), textStartX, textStartY);
-				textStartY += metrics.getHeight();
-			}
-			if (object.getAttack() > 0)
-			{
-				g.setColor(Color.RED);
-				g.drawString("Attack: " + object.getAttack(), textStartX, textStartY);
+				g.drawString("(" + object.getLife() + ")", textStartX, textStartY);
 			}
 		}
 		
-		g.setColor(Color.GREEN.darker());
-		if (SettingsWindow.getInstance().isVisible())
+		if (!CreationWindow.getInstance().isVisible())
 		{
-			final LogicObject object = SettingsWindow.getInstance().getObject();
-			if (!_objects.contains(object))
-				g.fillRect(object.getX(windowWidth), object.getY(windowHeight), objectWidth, objectHeight);
-		}
-		else
+			g.setColor(Color.GREEN.darker());
 			g.fillRect(_currentObject.x, _currentObject.y, objectWidth, objectHeight);
+		}
 	}
 	
 	public static ObjectsPanel getInstance()
