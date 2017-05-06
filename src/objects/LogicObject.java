@@ -2,6 +2,7 @@ package objects;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class LogicObject
 {
@@ -40,6 +41,11 @@ public final class LogicObject
 	public Set<LogicObject> getAttackedBy()
 	{
 		return _attackedBy;
+	}
+	
+	public Set<LogicObject> getValidAttackedBy()
+	{
+		return _attackedBy.stream().filter(obj -> obj.getLife() == 0 || obj.getLifeAfterAttack() > 0).collect(Collectors.toSet());
 	}
 	
 	public String getName()

@@ -106,30 +106,36 @@ public final class RunPanel extends JPanel implements ActionListener
 			
 			for (final LogicObject target : _targets)
 			{
-				for (final LogicObject attacker : target.getAttackedBy())
+				final Set<LogicObject> attackers = target.getValidAttackedBy();
+				for (final LogicObject attacker : attackers)
 				{
 					attacker.setIsAttackingNow(true);
 					target.setLifeAfterAttack(Math.max(0, target.getLifeAfterAttack() - attacker.getAttack()));
 				}
-				if (target.getLifeAfterAttack() > 0 && target.getAttackedBy().size() > 1)
+				if (target.getLifeAfterAttack() > 0 && attackers.size() > 1)
 					target.setLifeAfterAttack(Math.max(0, target.getLifeAfterAttack() - M));
 				
 				String text = target.getName() + " is being attacked by: ";
-				for (final LogicObject attacker : target.getAttackedBy())
+				for (final LogicObject attacker : attackers)
 					text += attacker.getName() + " (" + attacker.getAttack() + "), ";
-				if (target.getAttackedBy().size() > 1)
+				if (attackers.size() > 1)
 					text += "there's more than 1 attacker and therefore βm = " + M + ".";
 				else
 					text += "there's only 1 attacker and therefore βm = 0.";
 				text += "\r\nFinal calculation: " + target.getName() + " life => " + target.getLife() + " - [";
-				for (final LogicObject attacker : target.getAttackedBy())
+				for (final LogicObject attacker : attackers)
 					text += attacker.getAttack() + " + ";
-				if (target.getAttackedBy().size() > 1)
+				if (attackers.size() > 1)
 					text += "1 + ";
 				text = text.substring(0, text.length() - 3);
 				text += "] = " + target.getLifeAfterAttack() + ".";
 				
 				addText(text);
+				
+				if (target.getLifeAfterAttack() == 0)
+				{
+					// TODO revive attacked targets of this target when it dies.
+				}
 				
 				_targets.remove(target);
 				if (target.getAttack() > 0 && !target.getTargets().isEmpty())
