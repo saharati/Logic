@@ -9,9 +9,13 @@ import components.ObjectsPanel;
 import components.RunPanel;
 import components.SettingsWindow;
 import objects.LogicObject;
+import objects.NetSexOff;
+import objects.NodeSexOff;
+import java.util.LinkedList;
 
 public final class ObjectsListener extends MouseAdapter
 {
+	public static NetSexOff network1 = new NetSexOff(new LinkedList<NodeSexOff>());
 	@Override
 	public void mousePressed(final MouseEvent e)
 	{
@@ -54,6 +58,9 @@ public final class ObjectsListener extends MouseAdapter
 		
 		final int xPercent = (int) (((double) clickedX / windowWidth) * 100);
 		final int yPercent = (int) (((double) clickedY / windowHeight) * 100);
+		
+		network1.addNodeSexOff(new NodeSexOff(xPercent, yPercent));
+		
 		final LogicObject object = new LogicObject(xPercent, yPercent);
 		SettingsWindow.getInstance().create(object);
 	}

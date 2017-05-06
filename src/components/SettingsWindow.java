@@ -20,8 +20,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
+import listeners.ObjectsListener;
 import objects.LogicObject;
 import util.SpringUtilities;
+
+import objects.NetSexOff;
+import objects.NodeSexOff;
+import java.util.LinkedList;
 
 public final class SettingsWindow extends JFrame implements ActionListener
 {
@@ -247,17 +252,20 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		{
 			text += " name to " + name;
 			_object.setName(name);
+			ObjectsListener.network1.getLast().setName(name);
+			//make name modified only once
 		}
 		if (lifeModified)
 		{
 			text += " life to " + life;
 			_object.setLife(life);
-			
+			ObjectsListener.network1.getLast().setLife(life, ObjectsListener.network1.size());
+			//make life modified only once
 			if (life == 0)
 				for (final LogicObject object : _object.getAttackedBy())
 					object.getTargets().remove(_object);
 		}
-		if (attackModified)
+		if (attackModified)//you should change the value of attack to power linkedlist, multi-arrows mode
 		{
 			text += " attack to " + attack;
 			_object.setAttack(attack);
