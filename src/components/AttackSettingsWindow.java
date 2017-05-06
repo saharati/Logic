@@ -117,6 +117,8 @@ public final class AttackSettingsWindow extends JFrame implements ActionListener
 			return;
 		}
 		
+		setVisible(false);
+		
 		RunPanel.getInstance().addText(_object.getName() + " attacked " + node.getName() + " with power: " + attack);
 		
 		_object.getTargets().put(node, attack);

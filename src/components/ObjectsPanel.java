@@ -67,9 +67,12 @@ public final class ObjectsPanel extends JPanel
 		return _currentObject;
 	}
 	
-	// TODO near each arrow should draw the attack power.
 	private void drawArrow(final Graphics g, final int x1, final int y1, final int x2, final int y2, final boolean self, final int attack)
 	{
+		// TODO: draw number near arrow:
+		// g.setColor(Color.RED);
+		// g.drawString(String.valueOf(attack), x, y);
+		
 		final Graphics2D g2d = (Graphics2D) g.create();
 		final int objectWidth = getWidth() / ELEMENTS_PER_ROW;
 		final int objectHeight = getHeight() / ELEMENTS_PER_COL;
