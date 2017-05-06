@@ -19,23 +19,29 @@ public final class RunPanel extends JPanel implements ActionListener
 	private static final long serialVersionUID = -4016942900269606346L;
 	
 	private final JTextArea _chat = new JTextArea();
-	private final JButton _button = new JButton("Get Network Info");
+	private final JButton _restart = new JButton("Restart");
+	private final JButton _info = new JButton("Get Network Info");
 	
 	private RunPanel()
 	{
 		super(new BorderLayout());
 		
+		final Font font = new Font("Arial", Font.BOLD, 26);
+		
+		_restart.setFont(font);
+		_restart.addActionListener(this);
+		add(_restart, BorderLayout.NORTH);
+		
 		final JScrollPane chat = new JScrollPane(_chat);
-		final Font chatFont = new Font("Arial", Font.BOLD, 26);
-		_chat.setFont(chatFont);
+		_chat.setFont(font);
 		_chat.setLineWrap(true);
 		_chat.setWrapStyleWord(true);
 		_chat.setEditable(false);
 		add(chat, BorderLayout.CENTER);
 		
-		_button.setFont(chatFont);
-		_button.addActionListener(this);
-		add(_button, BorderLayout.SOUTH);
+		_info.setFont(font);
+		_info.addActionListener(this);
+		add(_info, BorderLayout.SOUTH);
 		
 		addText("Variables:");
 		addText("S - The participants in the case.");
@@ -68,12 +74,22 @@ public final class RunPanel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(final ActionEvent e)
 	{
-		for (final SexOffenderNode object : ObjectsPanel.getInstance().getObjects())
+		if (e.getSource() == _info)
 		{
-			if (object.getLifeAfterAttack() > 0)
-				addText(object.getName() + "'s life: " + object.getLifeAfterAttack() + ".");
-			else
-				addText(object.getName() + "'s life: 0, he's dead.");
+			for (final SexOffenderNode object : ObjectsPanel.getInstance().getObjects())
+			{
+				if (object.getLifeAfterAttack() > 0)
+					addText(object.getName() + "'s life: " + object.getLifeAfterAttack() + ".");
+				else
+					addText(object.getName() + "'s life: 0, he's dead.");
+			}
+		}
+		else
+		{
+			addText("Restarting... all objects removed.");
+			
+			ObjectsPanel.getInstance().getObjects().clear();
+			ObjectsPanel.getInstance().repaint();
 		}
 	}
 	
