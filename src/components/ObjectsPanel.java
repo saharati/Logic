@@ -83,18 +83,23 @@ public final class ObjectsPanel extends JPanel
 			dx = x2 - x1;
 			dy = y2 - y1;
 			len = (int) (Math.sqrt(dx * dx + dy * dy) - objectWidth / 2);
+			g.drawString(String.valueOf(attack), x1 - 4 * objectWidth / 5, y1);
 		}
 		else
 		{
+			 //g.setColor(Color.RED);
+			 //g.drawString(String.valueOf(attack), x1+(x2-x1)/2, y1 +(y2-y1)/2);
 			if (x1 < x2)
 			{
 				if (Math.abs(x1 - x2) > objectWidth / 2 + 20 && Math.abs(y1 - y2) < 7 * objectHeight / 4 )
 				{
 					dx = x2 - x1 - objectWidth / 2 - 5;
 					dy = y2 - y1;
+					 g.drawString(String.valueOf(attack), x1+ (x2-x1)/2 -30, y1 + (y2-y1)/2);
 				}
 				else
 				{
+					g.drawString(String.valueOf(attack), x1+ (x2-x1)/2 +20, y1 + (y2-y1)/2);
 					if (y1 < y2)
 					{
 						dx = x2 - x1;
@@ -113,9 +118,11 @@ public final class ObjectsPanel extends JPanel
 				{
 					dx = x2 - x1 + objectWidth / 2 + 5;
 					dy = y2 - y1;
+					g.drawString(String.valueOf(attack), x1+ (x2-x1)/2 +30, y1 + (y2-y1)/2);
 				}
 				else
 				{
+					g.drawString(String.valueOf(attack), x1+ (x2-x1)/2 -20, y1 + (y2-y1)/2);
 					if (y1 < y2)
 					{
 						dx = x2 - x1;
