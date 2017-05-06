@@ -259,7 +259,7 @@ public final class SettingsWindow extends JFrame implements ActionListener
 		{
 			text += " life to " + life;
 			_object.setLife(life);
-			ObjectsListener.network1.getLast().setLife(life, ObjectsListener.network1.size());
+			ObjectsListener.network1.getLast().setLife(life);
 			//make life modified only once
 			if (life == 0)
 				for (final LogicObject object : _object.getAttackedBy())
