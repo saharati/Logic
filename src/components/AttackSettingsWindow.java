@@ -74,12 +74,6 @@ public final class AttackSettingsWindow extends JFrame implements ActionListener
 	public void actionPerformed(final ActionEvent e)
 	{
 		final String target = _targets.getSelectedItem().toString();
-		if (_object.getTargets().containsKey(target))
-		{
-			JOptionPane.showMessageDialog(null, "Cannot modify target after its already set.", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
 		int attack;
 		try
 		{
@@ -114,6 +108,11 @@ public final class AttackSettingsWindow extends JFrame implements ActionListener
 		if (node == null)
 		{
 			JOptionPane.showMessageDialog(null, "The target could not be found.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		if (_object.getTargets().containsKey(node))
+		{
+			JOptionPane.showMessageDialog(null, "Cannot modify target after its already set.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		
