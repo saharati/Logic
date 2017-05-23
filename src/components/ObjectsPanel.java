@@ -27,7 +27,7 @@ public final class ObjectsPanel extends JPanel
 	private final List<SexOffenderNode> _objects = new ArrayList<>();
 	private final Point _currentObject = new Point();
 	
-	private ObjectsPanel()
+	protected ObjectsPanel()
 	{
 		final ObjectsListener ol = new ObjectsListener();
 		
@@ -224,6 +224,6 @@ public final class ObjectsPanel extends JPanel
 	
 	private static class SingletonHolder
 	{
-		private static final ObjectsPanel INSTANCE = new ObjectsPanel();
+		protected static final ObjectsPanel INSTANCE = new ObjectsPanel();
 	}
 }

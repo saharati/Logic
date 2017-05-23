@@ -22,7 +22,7 @@ public final class RunPanel extends JPanel implements ActionListener
 	private final JButton _restart = new JButton("Restart");
 	private final JButton _info = new JButton("Get Network Info");
 	
-	private RunPanel()
+	protected RunPanel()
 	{
 		super(new BorderLayout());
 		
@@ -100,6 +100,6 @@ public final class RunPanel extends JPanel implements ActionListener
 	
 	private static class SingletonHolder
 	{
-		private static final RunPanel INSTANCE = new RunPanel();
+		protected static final RunPanel INSTANCE = new RunPanel();
 	}
 }

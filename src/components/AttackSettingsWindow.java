@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 import objects.SexOffenderNode;
 import util.SpringUtilities;
@@ -63,7 +64,7 @@ public final class AttackSettingsWindow extends JFrame implements ActionListener
 		SpringUtilities.makeCompactGrid(getContentPane(), 3, 2, 5, 5, 5, 5);
 		
 		getContentPane().setBackground(Color.CYAN.darker());
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		setResizable(false);
 		pack();
 		setLocationRelativeTo(null);

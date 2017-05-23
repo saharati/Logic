@@ -1,6 +1,7 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Frame;
 
 import javax.swing.JFrame;
 
@@ -15,7 +16,7 @@ public final class Main
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setSize(1024, 768);
 		window.setLocationRelativeTo(null);
-		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		window.setExtendedState(Frame.MAXIMIZED_BOTH);
 		window.add(ObjectsPanel.getInstance(), BorderLayout.CENTER);
 		window.add(RunPanel.getInstance(), BorderLayout.EAST);
 		window.addWindowStateListener(e -> RunPanel.getInstance().recalculateSize(window.getWidth()));
